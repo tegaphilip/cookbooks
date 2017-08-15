@@ -1,11 +1,10 @@
 data = ''
-
 node['hocaboo']['database'].each do |key, value|
-    data = data + 'DB_' + key.to_s.upcase + '=' + value + "\n"
+    data = data + 'DB_' + key.to_s.upcase + '=' + value.to_s + "\n"
 end
 
 node['hocaboo']['environment_variables'].each do |key, value|
-    data = data + key.to_s.upcase + '=' + value + "\n"
+    data = data + key.to_s.upcase + '=' + value.to_s + "\n"
 end
 
 deploy 'App' do
