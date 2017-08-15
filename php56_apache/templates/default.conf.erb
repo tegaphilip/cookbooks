@@ -3,25 +3,14 @@
   ServerAdmin <%= node['server_admin'] %>
 
   DocumentRoot <%= node['deploy']['document_root'] %>
-  <Directory "/">
-          Options FollowSymLinks
-          AllowOverride None
-  </Directory>
-  
-  <Directory <%= node['deploy']['document_root'] + '/v1.0' %> >
-          Options Indexes FollowSymLinks MultiViews
-          AllowOverride None
-          Require all granted
+  <Directory <%= node['deploy']['document_root'] + '/v1.0/' %>>
+      Options -Indexes +FollowSymLinks +MultiViews
+      AllowOverride All
+      Require all granted
   </Directory>
 
-  ErrorLog /var/log/apache2/error.log
+  ErrorLog <%= node['apache2']['error_log_dir'] %>
+	CustomLog <%= node['apache2']['access_log_dir'] %> combined
 
-  LogLevel warn
-
-  CustomLog /var/log/apache2/access.log combined
-  ServerSignature Off
-
-  AddType application/x-httpd-php .php
-  AddType application/x-httpd-php-source .phps
-  DirectoryIndex index.php
+  #LogLevel warn
 </VirtualHost>

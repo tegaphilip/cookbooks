@@ -1,13 +1,3 @@
-data = ''
-
-node['hocaboo']['database'].each do |key, value|
-    data = data + 'DB_' + key.to_s.upcase + '=' + value + "\n"
-end
-
-node['hocaboo']['environment_variables'].each do |key, value|
-    data = data + key.to_s.upcase + '=' + value + "\n"
-end
-
 deploy 'App' do
   user node[:deploy][:user]
   repository 'git@gitlab.com:hocaboo/api.git'
@@ -19,17 +9,18 @@ deploy 'App' do
   deploy_to '/var/www/html/hocaboo-api'
   action :deploy
 
+  # restart do
+  #   current_release = release_path
+  #   file "#{release_path}/tmp/restart.txt" do
+  #     mode '0755'
+  #   end
+  # end
   before_restart do
     current_release = release_path
-
     execute 'run_composer' do
       cwd current_release
       command 'composer install'
       action :run
-    end
-
-    file "#{current_release}/v1.0/application/env/.env" do
-      content data
     end
   end
 end

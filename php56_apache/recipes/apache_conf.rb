@@ -6,12 +6,25 @@
 
 # Add the site configuration.
 
-Chef::Log::info('Hey tega I got here')
+default_conf = node['apache2']['sites_available_path'] + '/000-default.conf'
+mod_enabled_path = node['apache2']['mod_enable_path']
 
-file "#{node['apache2_dir']}/sites-available/0001-default.conf" do
+file "#{default_conf}" do
   action :create
 end
 
-template "#{node['apache2_dir']}/sites-available/0001-default.conf" do
+template "#{default_conf}" do
   source 'default.conf.erb'
+end
+
+service 'apache2' do
+  # supports { :restart => true, :status => true }
+  subscribes :restart, "template[#{default_conf}]", :immediately
+end
+
+execute 'enable_apache_rewrite_engine' do
+  command 'a2enmod rewrite'
+  action :run
+  notifies :restart, 'service[apache2]', :immediately
+  not_if { ::File.exist?("#{mod_enabled_path}/rewrite.load") }
 end

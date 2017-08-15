@@ -18,18 +18,9 @@ end
 file = File.open(public_key_path, "rb")
 contents = file.read
 
-Chef::Log::info("File Exists?")
-Chef::Log::info(send_to_slack.to_s)
-
 message = {'text' => contents}
 command_string = "curl -X POST -H 'Content-type: application/json' --data '" + message.to_json
  + "' " + node[:hocaboo][:slack][:hooks_url]
-
-Chef::Log::info("Custom JSON")
-Chef::Log::info(node[:hocaboo].to_json)
-Chef::Log::info("Send to Slack")
-Chef::Log::info(send_to_slack.to_s)
-Chef::Log::info(command_string)
 
 # execute 'Send Public Key to Slack' do
 #   command command_string
