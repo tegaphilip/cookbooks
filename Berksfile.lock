@@ -1,0 +1,17 @@
+DEPENDENCIES
+  hocaboo_api
+    path: hocaboo_api
+  initial_setup
+    path: initial_setup
+  php56_apache
+    path: php56_apache
+
+GRAPH
+  compat_resource (12.19.0)
+  hocaboo_api (1.0.0)
+  httpd (0.4.5)
+    compat_resource (>= 12.16.3)
+  initial_setup (1.0.0)
+  php56_apache (1.0.0)
+    httpd (~> 0.4)
+    initial_setup (>= 0.0.0)

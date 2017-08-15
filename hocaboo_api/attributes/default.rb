@@ -1,0 +1,1 @@
+default[:deploy]  = node[:deploy]

@@ -1,0 +1,5 @@
+name        "initial_setup"
+description "Set up Server"
+maintainer  "Tega Oghenekohwo"
+license     "Apache 2.0"
+version     "1.0.0"
