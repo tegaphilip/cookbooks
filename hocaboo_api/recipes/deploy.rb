@@ -7,10 +7,12 @@ node['hocaboo']['environment_variables'].each do |key, value|
     data = data + key.to_s.upcase + '=' + value.to_s + "\n"
 end
 
+Chef::Log::info("Deploy user is " + node[:deploy][:user])
+
 deploy 'App' do
   user node[:deploy][:user]
   repository 'git@gitlab.com:hocaboo/api.git'
-  revision 'hocaboolive'
+  revision node['hocaboo']['app']['revision']
   keep_releases 5
   migrate false
   ignore_failure false
