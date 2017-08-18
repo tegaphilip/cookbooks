@@ -1,3 +1,11 @@
+#
+# Cookbook:: php56_apache
+# Recipe:: install_composer
+#
+# Copyright:: 2017, The Authors, All Rights Reserved.
+
+# Add the site configuration.
+
 username = node[:deploy][:user]
 
 execute 'Install Composer' do

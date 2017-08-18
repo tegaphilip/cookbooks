@@ -1,3 +1,11 @@
+#
+# Cookbook:: php56_apache
+# Recipe:: disable_signatures
+#
+# Copyright:: 2017, The Authors, All Rights Reserved.
+
+# Add the site configuration.
+
 apache2_dir = node[:apache2_dir]
 conf_file = apache2_dir + File::SEPARATOR  + 'apache2.conf'
 

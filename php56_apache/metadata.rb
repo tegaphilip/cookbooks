@@ -6,3 +6,4 @@ version     "1.0.0"
 
 depends 'initial_setup'
 depends 'httpd', '~> 0.4'
+depends 's3_file', '~> 2.7.0'

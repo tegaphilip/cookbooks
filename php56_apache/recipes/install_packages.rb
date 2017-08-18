@@ -1,3 +1,11 @@
+#
+# Cookbook:: php56_apache
+# Recipe:: install_packages
+#
+# Copyright:: 2017, The Authors, All Rights Reserved.
+
+# Add the site configuration.
+
 apt_repository 'php56_repo' do
   uri 'ppa:ondrej/php'
   # components ['main', 'stable']

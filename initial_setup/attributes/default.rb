@@ -10,6 +10,7 @@ default[:apache2] = {
   :access_log_dir => '/var/log/apache2/access.log',
   :mod_enable_path => '/etc/apache2/mods-enabled',
   :sites_available_path => '/etc/apache2/sites-available',
+  :sites_enabled_path => '/etc/apache2/sites-enabled',
 }
 
 

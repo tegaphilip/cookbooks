@@ -18,3 +18,6 @@ include_recipe 'php56_apache::install_composer'
 
 # Set apache configurations
 include_recipe 'php56_apache::apache_conf'
+
+# Set apache configurations for ssl
+include_recipe 'php56_apache::ssl'

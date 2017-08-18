@@ -1,0 +1,42 @@
+<IfModule mod_ssl.c>
+	<VirtualHost _default_:443>
+    ServerName <%= node['hostname'] %>
+    ServerAdmin <%= node['server_admin'] %>
+
+    DocumentRoot <%= node['deploy']['document_root'] %>
+
+    <Directory <%= node['deploy']['document_root'] + '/v1.0/' %>>
+        Options -Indexes +FollowSymLinks +MultiViews
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog <%= node['apache2']['error_log_dir'] %>
+  	CustomLog <%= node['apache2']['access_log_dir'] %> combined
+
+		#   SSL Engine Switch:
+		#   Enable/Disable SSL for this virtual host.
+		SSLEngine on
+
+		#   A self-signed (snakeoil) certificate can be created by installing
+		#   the ssl-cert package. See
+		#   /usr/share/doc/apache2/README.Debian.gz for more info.
+		#   If both key and certificate are stored in the same file, only the
+		#   SSLCertificateFile directive is needed.
+		SSLCertificateFile	<%= node['apache2_dir'] %>/ssl/ssl-bundle.crt
+		SSLCertificateKeyFile <%= node['apache2_dir'] %>/ssl/hocaboo.com.key
+
+		<FilesMatch "\.(cgi|shtml|phtml|php)$">
+				SSLOptions +StdEnvVars
+		</FilesMatch>
+		<Directory /usr/lib/cgi-bin>
+				SSLOptions +StdEnvVars
+		</Directory>
+
+		BrowserMatch "MSIE [2-6]" \
+                        nokeepalive ssl-unclean-shutdown \
+                        downgrade-1.0 force-response-1.0
+        BrowserMatch "MSIE [17-9]" ssl-unclean-shutdown
+
+	</VirtualHost>
+</IfModule>

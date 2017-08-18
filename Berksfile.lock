@@ -16,3 +16,5 @@ GRAPH
   php56_apache (1.0.0)
     httpd (~> 0.4)
     initial_setup (>= 0.0.0)
+    s3_file (~> 2.7.0)
+  s3_file (2.7.0)

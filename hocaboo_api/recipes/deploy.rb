@@ -1,3 +1,9 @@
+#
+# Cookbook:: hocaboo_api
+# Recipe:: deploy
+#
+# Copyright:: 2017, The Authors, All Rights Reserved.
+
 data = ''
 node['hocaboo']['database'].each do |key, value|
     data = data + 'DB_' + key.to_s.upcase + '=' + value.to_s + "\n"
@@ -7,12 +13,47 @@ node['hocaboo']['environment_variables'].each do |key, value|
     data = data + key.to_s.upcase + '=' + value.to_s + "\n"
 end
 
-Chef::Log::info("Deploy user is " + node[:deploy][:user])
+git_url = 'git@gitlab.com:hocaboo/api.git'
+revision = node['hocaboo']['app']['revision']
+
+
+directory '/var/www/html/hocaboo-api' do
+  recursive true
+end
+
+# For some reason, this command is needed to authenticate gitlab as a known host
+known_hosts = "/home/#{node[:deploy][:user]}/.ssh/known_hosts"
+execute 'add_gitlab_as_known_host' do
+  user 'root'
+  command "ssh-keyscan gitlab.com >> #{known_hosts} 2>/dev/null"
+  not_if "grep '^gitlab.com ' #{known_hosts} "
+end
+# bash 'allow_remote_host' do
+#   user node[:deploy][:user]
+#   cwd '/var/www/html/hocaboo-api'
+#   code <<-EOH
+#     #!/usr/bin/expect
+#     spawn "git ls-remote '#{git_url}' '#{revision}*'";
+#     expect 'Are you sure you want to continue connecting (yes/no)? ';
+#     send 'yes\r';
+#     EOH
+# end
+
+# script 'allow_remote_host' do
+#   user node[:deploy][:user]
+#   cwd '/var/www/html/hocaboo-api'
+#   interpreter "/usr/bin/expect"
+#   code <<-EOH
+#     set timeout 360
+#     spawn "git ls-remote '#{git_url}' '#{revision}*'"
+#     expect "Are you sure you want to continue connecting (yes/no)? " { send "yes\r" }
+#     EOH
+# end
 
 deploy 'App' do
   user node[:deploy][:user]
-  repository 'git@gitlab.com:hocaboo/api.git'
-  revision node['hocaboo']['app']['revision']
+  repository "#{git_url}"
+  revision revision
   keep_releases 5
   migrate false
   ignore_failure false

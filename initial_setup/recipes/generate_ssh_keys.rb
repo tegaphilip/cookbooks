@@ -15,6 +15,10 @@ bash 'generate ssh key pair' do
   not_if { ::File.exist?("#{private_key_path}") }
 end
 
+file "/home/#{node[:deploy][:user]}/.ssh/known_hosts" do
+  action :create
+end
+
 # file = File.open(public_key_path, "rb")
 # contents = file.read
 #
