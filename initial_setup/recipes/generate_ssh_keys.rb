@@ -2,11 +2,6 @@ username = node[:deploy][:user]
 private_key_path = "/home/#{node[:deploy][:user]}/.ssh/id_rsa"
 public_key_path = "/home/#{node[:deploy][:user]}/.ssh/id_rsa.pub"
 
-send_to_slack = false
-unless File.exist?("#{private_key_path}")
-  send_to_slack = true
-end
-
 bash 'generate ssh key pair' do
   user username
   code <<-EOH

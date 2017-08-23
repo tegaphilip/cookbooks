@@ -4,18 +4,17 @@
 #
 # Copyright:: 2017, The Authors, All Rights Reserved.
 
-data = ''
+env_variables = ''
 node['hocaboo']['database'].each do |key, value|
-    data = data + 'DB_' + key.to_s.upcase + '=' + value.to_s + "\n"
+    env_variables = env_variables + 'DB_' + key.to_s.upcase + '=' + value.to_s + "\n"
 end
 
 node['hocaboo']['environment_variables'].each do |key, value|
-    data = data + key.to_s.upcase + '=' + value.to_s + "\n"
+    env_variables = env_variables + key.to_s.upcase + '=' + value.to_s + "\n"
 end
 
 git_url = 'git@gitlab.com:hocaboo/api.git'
 revision = node['hocaboo']['app']['revision']
-
 
 directory '/var/www/html/hocaboo-api' do
   recursive true
@@ -28,27 +27,25 @@ execute 'add_gitlab_as_known_host' do
   command "ssh-keyscan gitlab.com >> #{known_hosts} 2>/dev/null"
   not_if "grep '^gitlab.com ' #{known_hosts} "
 end
-# bash 'allow_remote_host' do
-#   user node[:deploy][:user]
-#   cwd '/var/www/html/hocaboo-api'
-#   code <<-EOH
-#     #!/usr/bin/expect
-#     spawn "git ls-remote '#{git_url}' '#{revision}*'";
-#     expect 'Are you sure you want to continue connecting (yes/no)? ';
-#     send 'yes\r';
-#     EOH
-# end
 
-# script 'allow_remote_host' do
-#   user node[:deploy][:user]
-#   cwd '/var/www/html/hocaboo-api'
-#   interpreter "/usr/bin/expect"
-#   code <<-EOH
-#     set timeout 360
-#     spawn "git ls-remote '#{git_url}' '#{revision}*'"
-#     expect "Are you sure you want to continue connecting (yes/no)? " { send "yes\r" }
-#     EOH
-# end
+envs = node['hocaboo']['environment_variables']
+slack_token = envs['SLACK_TOKEN']
+channel = 'downtime'
+
+message = '{{MESSAGE}}'
+slack_command = "curl -d 'token=" + slack_token + "&channel=" + channel + "&text=" +
+                 message +"&link_names=true&username=Deployer'" +
+                 " -X POST https://slack.com/api/chat.postMessage"
+
+def post_to_slack(command_string)
+  execute "message" do
+    command command_string
+  end
+end
+
+starting = "*API Deployment to " + envs['CI_ENV'] + " starting*"
+my_command = slack_command.sub '{{MESSAGE}}', starting
+post_to_slack(my_command)
 
 deploy 'App' do
   user node[:deploy][:user]
@@ -71,7 +68,16 @@ deploy 'App' do
     end
 
     file "#{current_release}/v1.0/application/env/.env" do
-      content data
+      content env_variables
+    end
+
+    directory "#{current_release}/tmp" do
+      mode '0777'
+      owner "#{node[:deploy][:user]}"
     end
   end
 end
+
+ending = "*API Deployment to " + envs['CI_ENV'] + " ending*"
+my_command = slack_command.sub '{{MESSAGE}}', ending
+post_to_slack(my_command)

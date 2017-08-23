@@ -18,6 +18,7 @@ apt_update 'Update the apt-cache' do
 	action :update
 end
 
+#Install apache
 package value_for_platform_family(:rhel => 'httpd', :debian => 'apache2') do
 	Chef::Log.info("Installing apache2")
 	action :install
@@ -28,6 +29,7 @@ packages = [
 	'php5.6-mysql',
 	'php5.6-gettext',
 	'php5.6-mbstring',
+  'php5.6-mcrypt',
 	'php5.6-xdebug',
 	'libapache2-mod-php5.6',
 	'php5.6-curl',
@@ -43,6 +45,10 @@ packages.each { |package_name|
 	end
 }
 
+# Restart apache
+service 'apache2' do
+  action :restart
+end
 # Remove the added apt-cache repository
 # apt_repository 'php56_repo' do
 #   uri 'ppa:ondrej/php'
