@@ -43,7 +43,10 @@ def post_to_slack(command_string)
   end
 end
 
-starting = "*API Deployment to " + envs['CI_ENV'] + " starting*"
+deployment_message = "*Deployment to instance `" + node['hostname'] +
+"` of " + envs['CI_ENV'] + " API Server"
+
+starting = deployment_message + " starting*"
 my_command = slack_command.sub '{{MESSAGE}}', starting
 post_to_slack(my_command)
 
@@ -75,9 +78,19 @@ deploy 'App' do
       mode '0777'
       owner "#{node[:deploy][:user]}"
     end
+
+    # send terminate signal to currently running php processes
+    # if deployment is on worker instance
+    if node['hostname'].include? 'worker'
+      Chef::Log::info('Killing PHP jobs on worker instances')
+      execute 'kill_php' do
+        command "kill $(ps aux | grep '[^]]/usr/bin/php' | awk '{print $2}')"
+      end
+    end
+
   end
 end
 
-ending = "*API Deployment to " + envs['CI_ENV'] + " ending*"
+ending = deployment_message + " ending*"
 my_command = slack_command.sub '{{MESSAGE}}', ending
 post_to_slack(my_command)
