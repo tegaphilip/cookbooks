@@ -5,5 +5,5 @@ license     "Apache 2.0"
 version     "1.0.0"
 
 depends 'initial_setup'
-depends 'httpd', '~> 0.4'
+depends 'newrelic-infra'
 depends 's3_file', '~> 2.7.0'
