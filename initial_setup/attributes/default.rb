@@ -1,6 +1,7 @@
 default[:deploy]  = {}
 default[:deploy][:user]  = 'devteam'
 default[:apache2_dir] = '/etc/apache2'
+default[:php_ini] = '/etc/php/5.6/apache2/php.ini'
 default[:server_admin] = 'devteam@hocaboo.com'
 default[:deploy][:document_root] = '/var/www/html/hocaboo-api/current'
 default[:my_env] = node['hocaboo']['environment_variables']['CI_ENV']
