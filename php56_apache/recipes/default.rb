@@ -25,6 +25,8 @@ include_recipe 'php56_apache::apache_conf'
 # Set apache configurations for ssl
 include_recipe 'php56_apache::ssl'
 
-# if node[:my_env] == 'production'
-#     include_recipe 'newrelic-infra::default'
-# end
+# Install wkhtmltopdf
+include_recipe 'php56_apache::wkhtmltopdf'
+
+# Install wkhtmltopdf
+include_recipe 'php56_apache::locales'
