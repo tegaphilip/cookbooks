@@ -75,12 +75,13 @@ deploy 'App' do
     end
 
     directory "#{current_release}/tmp" do
-      mode '0775'
+      mode '0777'
       owner "#{node[:deploy][:user]}"
+      recursive true
     end
 
-    execute 'kill_php' do
-      command "chmod 777 #{current_release}/tmp/uploads"
+    execute 'allow_upload' do
+      command "chmod -R 777 #{current_release}/tmp"
     end
 
     # send terminate signal to currently running php processes
