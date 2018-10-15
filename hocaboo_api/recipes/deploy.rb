@@ -6,15 +6,16 @@
 
 env_variables = ''
 node['hocaboo']['database'].each do |key, value|
-    env_variables = env_variables + 'DB_' + key.to_s.upcase + '=' + value.to_s + "\n"
+  env_variables = env_variables + 'DB_' + key.to_s.upcase + '=' + value.to_s + "\n"
 end
 
 node['hocaboo']['environment_variables'].each do |key, value|
-    env_variables = env_variables + key.to_s.upcase + '=' + value.to_s + "\n"
+  env_variables = env_variables + key.to_s.upcase + '=' + value.to_s + "\n"
 end
 
 git_url = 'git@gitlab.com:hocaboo/api.git'
 revision = node['hocaboo']['app']['revision']
+dbConfig = node['hocaboo']['database']
 
 directory '/var/www/html/hocaboo-api' do
   recursive true
@@ -34,8 +35,8 @@ channel = 'downtime'
 
 message = '{{MESSAGE}}'
 slack_command = "curl -d 'token=" + slack_token + "&channel=" + channel + "&text=" +
-                 message +"&link_names=true&username=Deployer'" +
-                 " -X POST https://slack.com/api/chat.postMessage"
+    message + "&link_names=true&username=Deployer'" +
+    " -X POST https://slack.com/api/chat.postMessage"
 
 def post_to_slack(command_string)
   execute "message" do
@@ -44,7 +45,7 @@ def post_to_slack(command_string)
 end
 
 deployment_message = "*Deployment to instance `" + node['hostname'] +
-"` of " + envs['CI_ENV'] + " API Server"
+    "` of " + envs['CI_ENV'] + " API Server"
 
 starting = deployment_message + " starting*"
 my_command = slack_command.sub '{{MESSAGE}}', starting
@@ -82,6 +83,13 @@ deploy 'App' do
 
     execute 'allow_upload' do
       command "chmod -R 777 #{current_release}/tmp"
+    end
+
+    execute 'run_migrations' do
+      # change directory to v1.0 directory and execute migration script
+      command "cd #{current_release}/v1.0 && PHINX_DBHOST=#{dbConfig['host']} PHINX_DBNAME=#{dbConfig['name']} " +
+                  "PHINX_DBUSER=#{dbConfig['user']} PHINX_DBPASS=#{dbConfig['pass']} PHINX_DBPORT=#{dbConfig['port']}" +
+                  "php ../vendor/bin/phinx migrate -e all"
     end
 
     # send terminate signal to currently running php processes
