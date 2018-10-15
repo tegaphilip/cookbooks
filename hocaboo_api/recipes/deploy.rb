@@ -88,7 +88,7 @@ deploy 'App' do
     execute 'run_migrations' do
       # change directory to v1.0 directory and execute migration script
       command "cd #{current_release}/v1.0 && PHINX_DBHOST=#{dbConfig['host']} PHINX_DBNAME=#{dbConfig['name']} " +
-                  "PHINX_DBUSER=#{dbConfig['user']} PHINX_DBPASS=#{dbConfig['pass']} PHINX_DBPORT=#{dbConfig['port']}" +
+                  "PHINX_DBUSER=#{dbConfig['user']} PHINX_DBPASS='#{dbConfig['pass']}' PHINX_DBPORT=#{dbConfig['port']}" +
                   " php ../vendor/bin/phinx migrate -e all"
     end
 
