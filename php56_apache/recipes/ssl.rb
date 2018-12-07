@@ -27,6 +27,7 @@ file "#{cert_key_file}" do
 end
 
 s3_file "#{cert_key_file}" do
+  Chef::Log.info("Downloading S3 Key File")
 	remote_path "#{node['hocaboo']['server']['cert_key_file']}"
 	bucket "#{node['hocaboo']['server']['cert_bucket']}"
 	aws_access_key_id node['hocaboo']['environment_variables']['AWS_ACCESS_KEY_ID']
@@ -34,6 +35,7 @@ s3_file "#{cert_key_file}" do
 end
 
 s3_file "#{cert_file}" do
+  Chef::Log.info("Downloading S3 Cert File")
 	remote_path "#{node['hocaboo']['server']['cert_file']}"
 	bucket "#{node['hocaboo']['server']['cert_bucket']}"
 	aws_access_key_id node['hocaboo']['environment_variables']['AWS_ACCESS_KEY_ID']
