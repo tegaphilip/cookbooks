@@ -6,11 +6,20 @@
 
 # Add the site configuration.
 
-ini_file= node[:php_ini]
+ini_file = node[:php_ini]
 if File.exist?(ini_file)
-	execute 'Increase post max size' do
-		command "echo 'post_max_size = 20M' >> #{ini_file}"
-		action :run
-		not_if "grep '^post_max_size = 20M$' #{ini_file}"
+	file = File.open(ini_file, "rb")
+	contents = file.read
+	contents = contents.gsub('post_max_size = 8M', ';')
+	contents = contents.gsub('post_max_size = 20M', ';')
+	contents = contents.gsub('upload_max_filesize = 2M', ';')
+	contents = contents.gsub('upload_max_filesize = 20M', ';')
+
+	contents = contents + "\n" + 'post_max_size = 20M'
+	contents = contents + "\n" + 'upload_max_filesize = 20M'
+
+	file ini_file do
+	  content contents
 	end
+
 end
