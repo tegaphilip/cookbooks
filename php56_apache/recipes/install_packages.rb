@@ -36,7 +36,9 @@ packages = [
 	'php5.6-curl',
 	'php5.6-zip',
 	'php5.6-dom',
-	'php5.6-gd'
+	'php5.6-gd',
+  'php5.6-bcmath',
+  'php5.6-sockets'
 ]
 
 packages.each { |package_name|

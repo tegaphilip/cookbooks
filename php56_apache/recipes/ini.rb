@@ -15,8 +15,8 @@ if File.exist?(ini_file)
 	contents = contents.gsub('upload_max_filesize = 2M', ';')
 	contents = contents.gsub('upload_max_filesize = 20M', ';')
 
-	contents = contents + "\n" + 'post_max_size = 20M'
-	contents = contents + "\n" + 'upload_max_filesize = 20M'
+	contents = contents + "\n" + 'post_max_size = 32M'
+	contents = contents + "\n" + 'upload_max_filesize = 32M'
 
 	file ini_file do
 	  content contents
