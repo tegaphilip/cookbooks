@@ -44,7 +44,7 @@ def post_to_slack(command_string)
   end
 end
 
-deployment_message = "*Deployment to instance `" + node['hostname'] +
+deployment_message = "*Deployment of code from " + revision + " to instance `" + node['hostname'] +
     "` of " + envs['CI_ENV'] + " API Server"
 
 starting = deployment_message + " starting*"
