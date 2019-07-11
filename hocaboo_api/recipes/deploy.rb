@@ -94,6 +94,7 @@ deploy 'App' do
 
     # send terminate signal to currently running php processes
     # if deployment is on worker instance
+    Chef::Log::info(node)
     if node['hostname'].include? 'worker'
       Chef::Log::info('Killing PHP jobs on worker instances')
       execute 'kill_php' do
